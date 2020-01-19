@@ -1,0 +1,232 @@
+<?php
+//this is the main page for our Bitter website, 
+//it will display all tweets from those we are trolling
+//as well as recommend people we should be trolling.
+//you can also post a tweet from here
+
+session_start();
+include("connect.php");
+
+if(isset($_SESSION["SESS_MEMBER_ID"])){
+    //echo "You are logged in <br>";
+    include("Tweets.php");
+    include("Users.php");
+}
+else{
+    header("Location:Login.php?");
+}
+
+//echo "<script> alert(" . $_SESSION[""]
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Bitter Home Page, view all your trolls here. Start trolling your friends now.">
+    <meta name="author" content="Nick Taggart, nick.taggart@nbcc.ca: Most Recently Updated By: Ethan Steeves, ethansteeves@gmail.com">
+    <link rel="icon" href="favicon.ico">
+
+    <title>Bitter - Social Media for Trolls, Narcissists, Bullies and Presidents</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="includes/bootstrap.min.css" rel="stylesheet">
+    <!--<style>
+        
+        .modal-backdrop{
+            display: none;
+        }
+        
+    </style>-->
+
+    <!-- Custom styles for this template -->
+    <link href="includes/starter-template.css" rel="stylesheet">
+	<!-- Bootstrap core JavaScript-->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.js" ></script>
+    <script type="text/javascript" src="../Includes/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="../Includes/jquery.simplemodal.js"></script>
+    
+	<script type="text/javascript">
+	//just a little jquery to make the textbox appear/disappear like the real Twitter website does
+	
+        $(document).ready(function() {
+		//hide the submit button on page load
+		$("#button").hide();
+		$("#tweet_form").submit(function() {
+			
+			$("#button").hide();
+		});
+		$("#myTweet").click( function() {			
+			this.attributes["rows"].nodeValue = 5;
+			$("#button").show();
+			
+		});//end of click event
+		$("#myTweet").blur( function() {			
+			this.attributes["rows"].nodeValue = 1;
+                        //$("#button").hide();
+
+		});//end of click event
+                
+                $("#submitReply").hide();
+                
+//               $("#test").click()(function(){
+//                    $("#submitReply").show();
+//                })
+//               $("#subtest").click(function(){
+//                   //alert("inside click");
+//                   $.get(
+//                    "reply_proc.php",
+//                    $("#frmComment").serializeArray(),
+//                    function(data) {//anonymous function
+//                        alert("inside function"); //use this for debugging
+//                        //write the resulting message back to the mySpan tag
+//                        // 
+//// $("#mySpan").text(data.msg); 
+//
+//                        alert(data.msg);
+//                    },
+//                    "json" //change this to HTML for debugging
+//                ); //end of the get function call
+//                return true;
+//                //alert("HELP");
+//            
+//               });
+//               
+               
+                
+                
+	});//end of ready event handler
+    //this stuff might not be needed that is below
+    
+      /*  function test(){
+            $("#submitReply").show();
+        } */
+    /*
+        $("#test").click( function(){
+            ("#submitReply").modal({
+				opacity: 80,
+				overlayCss: {backgroundColor:"#CCC"}
+			
+			});//end modal
+			
+			return false;
+        });*/
+    
+    function subtest(id){
+                   //alert("inside click");
+                   var elementId = "#frmComment" + id;
+                   
+                   $.get(
+                    "reply_proc.php",
+                    $(elementId).serializeArray(),
+                    function(data) {//anonymous function
+                       // alert("inside function"); //use this for debugging
+                        //write the resulting message back to the mySpan tag
+                        // 
+// $("#mySpan").text(data.msg); 
+
+                        alert(data.msg);
+                    },
+                    "json" //change this to HTML for debugging
+                ); //end of the get function call
+                return true;
+                //alert("HELP");
+            
+               };
+               
+    
+               
+                
+        
+	</script>
+  </head>
+
+  <body>
+
+    <!--nav goes here-->
+    <?php include("includes/header.php"); ?>
+	<BR><BR>
+    <div class="container">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="mainprofile img-rounded">
+				<div class="bold">
+                                    <img class="bannericons" src="<?php echo $_SESSION['SESS_PROFILE_PIC'] ?>">
+				<?php User::ProfileInfo($con, $_SESSION["SESS_MEMBER_ID"]) ?>
+				<div class="trending img-rounded">
+				<div class="bold">Trending</div>
+				</div>
+				
+			</div>
+			<div class="col-md-6">
+				<div class="img-rounded">
+					<form method="post" id="tweet_form" action="tweet_proc.php">
+					<div class="form-group">
+						<textarea class="form-control" name="myTweet" id="myTweet" rows="1" placeholder="What are you bitter about today?"></textarea>
+						<input type="submit" name="button" id="button" value="Send" class="btn btn-primary btn-lg btn-block login-button"/>
+						
+					</div>
+					</form>
+				</div>
+				<div class="img-rounded">
+				<!--display list of tweets here       probably through ajex and scripts-->
+                                
+                                <?php
+                                
+                                Tweet::NewsFeed($con);
+                               
+                                ?>
+                        
+                        
+                                
+                                
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="whoToTroll img-rounded">
+				<div class="bold">Who to Troll?<BR></div>
+				<!-- display people you may know here-->
+				<?php 
+                                
+                                     User::WhoToFollow($con);
+                                    
+                                ?>
+				
+				</div><BR>
+				<!--don't need this div for now 
+				<div class="trending img-rounded">
+				© 2018 Bitter
+				</div>-->
+			</div>
+		</div> <!-- end row -->
+    </div><!-- /.container -->
+
+	
+
+    <!-- Bootstrap core JavaScript
+    ================================================== --> 
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"  crossorigin="anonymous"></script>
+    <script src="includes/bootstrap.min.js"></script>
+    
+  </body>
+  
+   <footer>
+      <br>
+      <h3>
+         <a class="foot" href="ContactUs.php">Contact Us</a>
+      </h3>   
+  </footer>
+  
+</html>
+
+<?php
+
+   if (isset($_GET["message"])){
+        $message = $_GET["message"];
+        echo "<script>alert('$message')</script>";
+    }
+
+?>
